@@ -2,10 +2,8 @@ import os
 from tqdm import tqdm
 import shutil
 
-# target = r"D:\MIMIC-CXR\mimic-cxr-jpg_2.0.0\data_need"
-# path = r"D:\MIMIC-CXR\mimic-cxr-jpg_2.0.0\files"
-target = r"C:\Users\11429\Desktop\CS 184A\Final Project\test1"
-path = r"C:\Users\11429\Desktop\CS 184A\Final Project\files"
+target = r"D:\MIMIC-CXR\mimic-cxr-jpg_2.0.0\data_need"
+path = r"D:\MIMIC-CXR\mimic-cxr-jpg_2.0.0\files"
 index = 0
 
 for subfolder in os.listdir(path):
