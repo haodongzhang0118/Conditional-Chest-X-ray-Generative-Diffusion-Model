@@ -46,6 +46,9 @@ class ChestXrayDataset(Dataset):
         
         processed_label = self.process_report(label)
 
+        # image size: (256, 3, 256, 256)
+        # label size: (256, 1, 64, 768)
+
         return image, processed_label
     
     def process_report(self, text):
