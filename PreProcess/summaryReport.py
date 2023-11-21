@@ -12,9 +12,11 @@ for subfolder in os.listdir(path):
         for sub_sub_subfolder in os.listdir(os.path.join(path, subfolder, sub_subfolder)):
                 path_txt = os.path.join(path, subfolder, sub_subfolder, sub_sub_subfolder, "label")
                 for file in os.listdir(path_txt):
-                    with open(os.path.join(path_txt, file), 'r') as f:
-                        findings = f.read()
-                        summary = summarizer(findings)[0]['summary_text']
-                        with open(os.path.join(path_txt, "summary.txt"), 'w') as f:
-                            f.write(summary)
+                    name, _ = os.path.splitext(file)
+                    if name != "summary":
+                        with open(os.path.join(path_txt, file), 'r') as f:
+                            findings = f.read()
+                            summary = summarizer(findings, max_length=105)[0]['summary_text']
+                            with open(os.path.join(path_txt, "summary.txt"), 'w') as f:
+                                f.write(summary)
     index += 1
