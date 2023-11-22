@@ -7,7 +7,7 @@ from diffusion.gaussian_diffusion import _extract_into_tensor
 from timm.models.vision_transformer import Mlp
 from FGFormer.FourierGuidanceInfo import PGA
 from FGFormer.LocalAttention import LocalWindowAttention
-from FGFormer.utils import window_partition, window_reverse
+from FGFormer.utils import window_partition, window_reverse, CrossAttention
 
 def modulate(x, shift, scale):
     return x * (1 + scale.unsqueeze(1)) + shift.unsqueeze(1)
@@ -210,6 +210,9 @@ class FGFormer(nn.Module):
                                                 attn_drop=drop,
                                                 act_layer=nn.GELU,
                                                 norm_layer=nn.LayerNorm) for _ in range(depth)])
+    
+    self.x_cross_attns = nn.ModuleList([CrossAttention(self.new_hidden_size, num_heads=num_heads, qkv_bias=True) for _ in range(depth - 1)])
+    self.struc_cross_attns = nn.ModuleList([CrossAttention(self.new_hidden_size, num_heads=num_heads, qkv_bias=True) for _ in range(depth - 1)])
 
     self.final_layer_noise = FinalLayer(hidden_size=hidden_size, window_size=window_size, output_channel=in_channels * 2)
     self.cnn1 = nn.Conv2d(in_channels=in_channels, out_channels=hidden_size, kernel_size=3, padding=1, stride=1)
@@ -248,7 +251,7 @@ class FGFormer(nn.Module):
     nn.init.constant_(self.final_layer_noise.linear.weight, 0)
     nn.init.constant_(self.final_layer_noise.linear.bias, 0)
 
-  def forward(self, x, t, y):
+  def forward(self, x, t, y, text):
     t = self.t_embedder(t)
     y = self.y_embedder(y, self.training)
     c = t + y
@@ -270,6 +273,10 @@ class FGFormer(nn.Module):
             x, stru = self.blocks[index](x + need[0], stru + need[1], c)
         else:
             x, stru = self.blocks[index](x, stru, c)
+        
+        if index < len(self.blocks) - 1:
+           x = self.x_cross_attns[index](text, x)
+           stru = self.struc_cross_attns[index](text, stru)
 
     x = self.final_layer_noise(x, c)
 
