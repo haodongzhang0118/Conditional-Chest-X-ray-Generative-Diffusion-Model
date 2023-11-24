@@ -194,7 +194,6 @@ class FGFormer(nn.Module):
     self.num_patches = (input_size // window_size) ** 2
 
     self.t_embedder = TimestepEmbedder(hidden_size=hidden_size)
-    self.y_embedder = LabelEmbedder(num_classes=num_classes, hidden_size=hidden_size, dropout_prob=drop)
     self.pos_embed = nn.Parameter(torch.zeros(1, self.num_patches, self.new_hidden_size), requires_grad=False)
 
     self.blocks = nn.ModuleList([FGFormer_block(
@@ -233,9 +232,6 @@ class FGFormer(nn.Module):
     pos_embed = get_2d_sincos_pos_embed(self.pos_embed.shape[-1], int(self.num_patches ** 0.5))
     self.pos_embed.data.copy_(torch.from_numpy(pos_embed).float().unsqueeze(0))
 
-    # Initialize label embedding table:
-    nn.init.normal_(self.y_embedder.embedding_table.weight, std=0.02)
-
     # Initialize timestep embedding MLP:
     nn.init.normal_(self.t_embedder.mlp[0].weight, std=0.02)
     nn.init.normal_(self.t_embedder.mlp[2].weight, std=0.02)
@@ -251,10 +247,8 @@ class FGFormer(nn.Module):
     nn.init.constant_(self.final_layer_noise.linear.weight, 0)
     nn.init.constant_(self.final_layer_noise.linear.bias, 0)
 
-  def forward(self, x, t, y, text):
+  def forward(self, x, t, y):
     t = self.t_embedder(t)
-    y = self.y_embedder(y, self.training)
-    c = t + y
     _, _, H, W = x.shape
     stru = x
     x = self.cnn1(x) # (B, hidden_size, H, W)
@@ -266,19 +260,19 @@ class FGFormer(nn.Module):
     previous = []
     for index in range(len(self.blocks)):
         if index < self.depth // 2 - 1:
-            x, stru = self.blocks[index](x, stru, c)
+            x, stru = self.blocks[index](x, stru, t)
             previous.append((x, stru))
         elif index >= self.depth // 2 + 1:
             need = previous[::-1][index - (self.depth // 2 + 1)]
-            x, stru = self.blocks[index](x + need[0], stru + need[1], c)
+            x, stru = self.blocks[index](x + need[0], stru + need[1], t)
         else:
-            x, stru = self.blocks[index](x, stru, c)
+            x, stru = self.blocks[index](x, stru, t)
         
         if index < len(self.blocks) - 1:
-           x = self.x_cross_attns[index](text, x)
-           stru = self.struc_cross_attns[index](text, stru)
+           x = self.x_cross_attns[index](y, x)
+           stru = self.struc_cross_attns[index](y, stru)
 
-    x = self.final_layer_noise(x, c)
+    x = self.final_layer_noise(x, t)
 
     x = window_reverse(x, self.window_size, H, W)
 
