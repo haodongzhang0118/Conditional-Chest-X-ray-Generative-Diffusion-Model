@@ -259,6 +259,9 @@ class FGFormer(nn.Module):
 
     previous = []
     for index in range(len(self.blocks)):
+        x = self.x_cross_attns[index](y, x)
+        stru = self.struc_cross_attns[index](y, stru)
+
         if index < self.depth // 2 - 1:
             x, stru = self.blocks[index](x, stru, t)
             previous.append((x, stru))
@@ -267,10 +270,6 @@ class FGFormer(nn.Module):
             x, stru = self.blocks[index](x + need[0], stru + need[1], t)
         else:
             x, stru = self.blocks[index](x, stru, t)
-        
-        if index < len(self.blocks) - 1:
-           x = self.x_cross_attns[index](y, x)
-           stru = self.struc_cross_attns[index](y, stru)
 
     x = self.final_layer_noise(x, t)
 
