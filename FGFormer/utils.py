@@ -60,8 +60,6 @@ class CrossAttention(nn.Module):
 
         q, k = self.q_norm(q), self.k_norm(k)
         q = q * self.scale
-        print(q.shape)
-        print(k.shape)
         attn = q @ k.transpose(-2, -1)
         attn = attn.softmax(dim=-1)
         attn = self.attn_drop(attn)
