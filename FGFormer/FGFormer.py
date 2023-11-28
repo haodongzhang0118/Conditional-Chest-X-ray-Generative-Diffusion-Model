@@ -6,7 +6,7 @@ from einops import rearrange
 from diffusion.gaussian_diffusion import _extract_into_tensor
 from timm.models.vision_transformer import Mlp
 from FGFormer.FourierGuidanceInfo import PGA
-from FGFormer.LocalAttention import LocalWindowAttention
+from FGFormer.SelfAttention import AttentionModule
 from FGFormer.utils import window_partition, window_reverse, CrossAttention
 
 def modulate(x, shift, scale):
@@ -101,7 +101,7 @@ class FGFormer_block(nn.Module):
         super().__init__()
         self.window_size = window_size
         self.pga = PGA(dim, bias=bias, window_size=window_size, scale=scale)
-        self.LW_attn = LocalWindowAttention(dim,
+        self.attn = AttentionModule(dim,
                                             num_heads=num_heads,
                                             mlp_ratio=mlp_ratio,
                                             qkv_bias=qkv_bias,
@@ -131,7 +131,7 @@ class FGFormer_block(nn.Module):
         x = modulate(self.norm1(x), shift_msa, scale_msa)
 
         structure_info = self.pga(structure_info)
-        x = self.LW_attn(x, structure_info)
+        x = self.attn(x, structure_info)
 
         x = initial + gate_msa.unsqueeze(1) * x
         x = x + gate_res.unsqueeze(1) * self.mlp1(modulate(self.norm2(x), shift_res, scale_res))
