@@ -210,8 +210,8 @@ class FGFormer(nn.Module):
                                                 act_layer=nn.GELU,
                                                 norm_layer=nn.LayerNorm) for _ in range(depth)])
     
-    self.x_cross_attns = nn.ModuleList([CrossAttention(self.new_hidden_size, num_heads=num_heads, qkv_bias=True) for _ in range(depth - 1)])
-    self.struc_cross_attns = nn.ModuleList([CrossAttention(self.new_hidden_size, num_heads=num_heads, qkv_bias=True) for _ in range(depth - 1)])
+    self.x_cross_attns = nn.ModuleList([CrossAttention(self.new_hidden_size, num_heads=num_heads, qkv_bias=True) for _ in range(depth)])
+    self.struc_cross_attns = nn.ModuleList([CrossAttention(self.new_hidden_size, num_heads=num_heads, qkv_bias=True) for _ in range(depth)])
 
     self.final_layer_noise = FinalLayer(hidden_size=hidden_size, window_size=window_size, output_channel=in_channels * 2)
     self.cnn1 = nn.Conv2d(in_channels=in_channels, out_channels=hidden_size, kernel_size=3, padding=1, stride=1)
