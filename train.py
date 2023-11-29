@@ -217,6 +217,7 @@ def main(args):
         logger.info(f"Beginning epoch {epoch}...")
         for x, y in loader:
             x = x.to(device)
+            y = y.squeeze(1)
             y = y.to(device)
             with torch.no_grad():
                 # Map input images to latent space + normalize latents:

@@ -50,7 +50,7 @@ class CrossAttention(nn.Module):
         self.proj = nn.Linear(dim, dim)
         self.proj_drop = nn.Dropout(proj_drop)
 
-    def forward(self, x: torch.Tensor, kv) -> torch.Tensor:
+    def forward(self, x, kv) -> torch.Tensor:
         B, N, C = x.shape
 
         kv = self.kv(kv).reshape(B, N, 2, self.num_heads, self.head_dim)
