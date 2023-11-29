@@ -56,4 +56,4 @@ class ChestXrayDataset(Dataset):
         encoded_input = self.tokenizer(text, return_tensors='pt', max_length=64, padding='max_length', truncation=True)
         with torch.no_grad():
             processed_text = self.model(**encoded_input)["last_hidden_state"] # (batch_size, sequence_length, hidden_size)
-        return processed_text
+        return processed_text.squeeze(1)
