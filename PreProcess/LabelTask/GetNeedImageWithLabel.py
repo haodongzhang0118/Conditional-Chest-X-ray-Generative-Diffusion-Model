@@ -6,6 +6,7 @@ subject_id_need = []
 study_id_need = []
 subject_id_not_need = []
 study_id_not_need = []
+labels = []
 
 # Load the CSV file
 df = pd.read_csv(r"D:\MIMIC-CXR\mimic-cxr-jpg_2.0.0\Useful Files\filtered_file.csv")
@@ -25,6 +26,7 @@ for index, row in df.iterrows():
     else:
         subject_id_need.append(row[0])
         study_id_need.append(row[1])
+        labels.append(cols_with_1[0] - 2)
 
 subject_id_need_condition = df['subject_id'].isin(subject_id_need)
 study_id_need_condition = df['study_id'].isin(study_id_need)
@@ -33,6 +35,8 @@ study_id_noneed_condition = df['study_id'].isin(study_id_not_need)
 
 df_need = df[subject_id_need_condition & study_id_need_condition]
 df_noneed = df[subject_id_noneed_condition & study_id_noneed_condition]
+
+df_need['label'] = labels
 
 df_need.to_csv(r"D:\MIMIC-CXR\mimic-cxr-jpg_2.0.0\Useful Files\filtered_file_need.csv", index=False)
 df_noneed.to_csv(r"D:\MIMIC-CXR\mimic-cxr-jpg_2.0.0\Useful Files\filtered_file_noneed.csv", index=False)
