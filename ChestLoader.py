@@ -3,6 +3,7 @@ from torch.utils.data import Dataset
 from PIL import Image
 from transformers import (AutoConfig, AutoTokenizer, AutoModel)
 from tqdm import tqdm
+import torch
 
 class ChestXrayDataset(Dataset):
     def __init__(self, root_dir, transform=None):
@@ -53,5 +54,6 @@ class ChestXrayDataset(Dataset):
     
     def process_report(self, text):
         encoded_input = self.tokenizer(text, return_tensors='pt', max_length=64, padding='max_length', truncation=True)
-        processed_text = self.model(**encoded_input)["last_hidden_state"] # (batch_size, sequence_length, hidden_size)
+        with torch.no_grad():
+            processed_text = self.model(**encoded_input)["last_hidden_state"] # (batch_size, sequence_length, hidden_size)
         return processed_text

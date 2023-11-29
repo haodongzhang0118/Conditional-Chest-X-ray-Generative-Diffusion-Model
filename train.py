@@ -15,7 +15,7 @@ import torch.distributed as dist
 from torch.nn.parallel import DistributedDataParallel as DDP
 from torch.utils.data import DataLoader
 from torch.utils.data.distributed import DistributedSampler
-from DataLoader import ChestXrayDataset
+from ChestLoader import ChestXrayDataset
 from torchvision import transforms
 import numpy as np
 from collections import OrderedDict
@@ -129,7 +129,6 @@ def main(args):
     torch.manual_seed(seed)
     torch.cuda.set_device(device)
     print(f"Starting rank={rank}, seed={seed}, world_size={dist.get_world_size()}.")
-
     # Setup an experiment folder:
     if rank == 0 and args.ckpt == "":
         os.makedirs(args.results_dir, exist_ok=True)  # Make results folder (holds all experiment subfolders)
@@ -148,7 +147,6 @@ def main(args):
         logger.info(f"Experiment directory created at {experiment_dir}")
     else:
         logger = create_logger(None)
-
     # Create model:
     assert args.image_size % 8 == 0, "Image size must be divisible by 8 (for the VAE encoder)."
     latent_size = args.image_size // 8
