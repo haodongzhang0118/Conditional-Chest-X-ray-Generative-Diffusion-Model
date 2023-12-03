@@ -781,6 +781,8 @@ class GaussianDiffusion:
                 ModelMeanType.EPSILON: noise,
             }
             target = need_dict[self.model_mean_type]
+            if self.model_mean_type == ModelMeanType.EPSILON:
+                target_prev = need_dict[ModelMeanType.PREVIOUS_X]
             assert model_output.shape == target.shape == x_start.shape
             terms["mse"] = mean_flat((target - model_output) ** 2)
             if "vb" in terms:
