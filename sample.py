@@ -17,6 +17,11 @@ from download import find_model
 from FGFormer.FGFormer import FGFormers
 import argparse
 import random
+from transformers import (
+    AutoConfig,
+    AutoTokenizer,
+    AutoModel,
+)
 
 
 def main(args):
@@ -38,13 +43,20 @@ def main(args):
     diffusion = create_diffusion(str(args.num_sampling_steps))
     vae = AutoencoderKL.from_pretrained(f"stabilityai/sd-vae-ft-{args.vae}").to(device)
 
-    # Labels to condition the model with (feel free to change):
-#    class_labels = [207, 360, 387, 974, 88, 979, 417, 279]
-    class_labels = [random.randint(0, args.num_classes - 1) for _ in range(8)]
+    config = AutoConfig.from_pretrained('zzxslp/RadBERT-RoBERTa-4m')
+    tokenizer = AutoTokenizer.from_pretrained('zzxslp/RadBERT-RoBERTa-4m')
+    model_bert = AutoModel.from_pretrained('zzxslp/RadBERT-RoBERTa-4m', config=config)
+
+    # Text labels to condition the model with (feel free to change):
+    texts = ["No acute cardiopulmonary process stable torturous dilated thoracic aorta."] * 8
+    encoded_input = tokenizer(texts, return_tensors='pt', max_length=64, padding='max_length', truncation=True)
+    with torch.no_grad():
+        processed_text = model_bert(**encoded_input)["last_hidden_state"].to(device) # (batch_size, sequence_length, hidden_size)
+
     # Create sampling noise:
-    n = len(class_labels)
+    n = len(processed_text)
     z = torch.randn(n, 4, latent_size, latent_size, device=device)
-    y = torch.tensor(class_labels, device=device)
+    y = processed_text.clone()
 
     # Setup classifier-free guidance:
     z = torch.cat([z, z], 0)
