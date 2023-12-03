@@ -245,8 +245,8 @@ class FGFormer(nn.Module):
     # Zero-out output layers:
     nn.init.constant_(self.final_layer_noise.adaLN_modulation[-1].weight, 0)
     nn.init.constant_(self.final_layer_noise.adaLN_modulation[-1].bias, 0)
-    nn.init.constant_(self.final_layer_noise.linear.weight, 0)
-    nn.init.constant_(self.final_layer_noise.linear.bias, 0)
+    # nn.init.constant_(self.final_layer_noise.linear.weight, 0)
+    # nn.init.constant_(self.final_layer_noise.linear.bias, 0)
 
   def forward(self, x, t, y):
     t = self.t_embedder(t)
