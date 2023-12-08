@@ -10,29 +10,46 @@ The dataset we used is MIMIC-CXR-JPG v2.0.0, which is about 400 ~ 500 GB. It is 
 
 The original structure of dataset is:
 root/
+
 ----set/
+
 --------subject/
+
 ------------study/
+
 ----------------image.png + report.txt
 
 After downloading the dataset, using python scripts in PreProcess/LabelTask/ process data, guiding by the csv files in CSVFiles Label/. This will make the dataset folder become:
 Dataset Train (80015 images)
 root/
 ----label1
+
 --------image1.png
+
 --------image2.png
+
 ----label2
+
 .
+
 ----label14
+
 
 Dataset Test (20000 images)
 root/
+
 ----label1
+
 --------image1.png
+
 --------image2.png
+
 ----label2
+
 .
+
 ----label14
+
 
 # Training
 
