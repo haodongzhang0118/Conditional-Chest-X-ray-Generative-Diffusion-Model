@@ -9,6 +9,7 @@ Here is the completely instruction for this project:
 The dataset we used is MIMIC-CXR-JPG v2.0.0, which is about 400 ~ 500 GB. It is impossible to upload it into the github. However, it can be downloaded from the website https://physionet.org/content/mimic-cxr-jpg/2.0.0/.
 
 The original structure of dataset is:
+
 root/
 
 ----set/
@@ -21,7 +22,9 @@ root/
 
 After downloading the dataset, using python scripts in PreProcess/LabelTask/ process data, guiding by the csv files in CSVFiles Label/. This will make the dataset folder become:
 Dataset Train (80015 images)
+
 root/
+
 ----label1
 
 --------image1.png
@@ -36,6 +39,7 @@ root/
 
 
 Dataset Test (20000 images)
+
 root/
 
 ----label1
