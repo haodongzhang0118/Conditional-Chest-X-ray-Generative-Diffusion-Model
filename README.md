@@ -4,6 +4,20 @@ In this project, we use FGFormer-B/4 as our model for training and sampling
 
 Here is the completely instruction for this project:
 
+# Demo:
+
+The project.ipynb is the simple demo that using our model generates an image based on random labels (0 - 13)
+
+We recommend that using a GPU to run it, othervise it may take 12 mins.
+
+Before using the project.ipynb, download checkpoints from the google drive with the link: https://drive.google.com/drive/folders/1Prr-fasZ2LHesbOABDAFgiin2PmS3M2q?usp=sharing
+There are several checkpoints in it. We recommend to use 0090000.pt which is the latest with 90000 training steps.
+
+Putting them into the same folder to avoid errors.
+
+project.html is the html version of the finished running project.ipynb.
+
+
 # Dataset
 
 The dataset we used is MIMIC-CXR-JPG v2.0.0, which is about 400 ~ 500 GB. It is impossible to upload it into the github. However, it can be downloaded from the website https://physionet.org/content/mimic-cxr-jpg/2.0.0/.
