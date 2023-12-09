@@ -1,13 +1,11 @@
 # Conditional Chest X-ray Generative Diffusion Model with FGFormer
 
-In this project, we use FGFormer-B/4 as our model for training and sampling
+In this project, we use FGFormer-B/4 as our model for training and sampling. Here is the completely instruction for the project.
 
 # Result Presentation
 ![samples](https://github.com/haodongzhang0118/Conditional-Chest-X-ray-Generative-Diffusion-Model/assets/86388854/576cc953-1a06-4891-9ec5-da3afe42fbaf)
 
-
-
-Here is the completely instruction for this project:
+The denoise processing has been included in the github repo which is called **generation_gif.gif**
 
 # Demo:
 
